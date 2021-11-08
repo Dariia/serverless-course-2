@@ -14,17 +14,20 @@ const splitToBatches = data => {
   while (data.length > 0) {
     batches.push(data.splice(0, BATCH_SIZE));
   }
-
+  console.log(`total batches: ${batches.length}`);
   return batches;
 };
 
 export async function processBucket (event) {
+  console.log('event from processBucket', event);
   await Promise.all(
     event.Records.map(async record => {
       try {
         const originalText = await s3.getObject(buildS3Params(record));
         const jsonData = JSON.parse(originalText.Body.toString('utf-8'));
+        console.log('jsonData from processBucket', jsonData);
         const batches = splitToBatches(jsonData);
+
         await sendToSqs(batches, process.env.QUEUE_URL);
       } catch (error) {
         console.error(error.message);

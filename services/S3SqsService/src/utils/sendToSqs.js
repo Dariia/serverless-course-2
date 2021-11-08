@@ -15,6 +15,7 @@ export async function sendToSqs (batches, queueUrl) {
   await Promise.all(
     batches.map(async itemData => {
       const items = [];
+      console.log('itemData: ', itemData);
 
       itemData.forEach(item => {
         for (let key of Object.keys(item)) {
@@ -26,9 +27,10 @@ export async function sendToSqs (batches, queueUrl) {
           ...item
         });
       });
-
+      console.log('beforeTry: ', items);
       try {
         batchCount++;
+        console.log('beforeAwait items, queueUrl: ', items, queueUrl);
         const result = await sqs.sendMessage(buildSQSParams(items, queueUrl));
         console.log('success: ', result);
       } catch (error) {

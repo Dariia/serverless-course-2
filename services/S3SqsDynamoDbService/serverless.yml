@@ -2,7 +2,7 @@ service: products-sqs-dynamodb-service
 frameworkVersion: "2"
 
 custom:
-  sqs_arn: arn:aws:sqs:${opt:region, self:provider.region}:530260462866:product-serverless-queue-${self:provider.stage}
+  sqs_arn: arn:aws:sqs:${opt:region, self:provider.region}:621942503630:product-serverless-queue-${self:provider.stage}
 
 provider:
   name: aws

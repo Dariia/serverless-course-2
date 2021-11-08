@@ -1,12 +1,14 @@
 import dynamoDb from '../../../../libs/dynamoDb';
 
 export async function saveToDB (itemData, tableName) {
+  console.log('processSqsMessage saveToDB', itemData, tableName);
+
   try {
     const dynamoDbParams = buildDynamoDbParams(itemData, tableName);
     const result = await dynamoDb.batchWrite(dynamoDbParams);
     console.log('Success: ', result);
   } catch (error) {
-    console.error('Error: ', error.message);
+    console.error('Error: ', error);
   }
 };
 
