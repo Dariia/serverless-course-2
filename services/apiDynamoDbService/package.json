@@ -1,0 +1,11 @@
+{
+  "name": "dynamo_db_service",
+  "version": "1.0.0",
+  "description": "dynamo db service",
+  "main": "handler.js",
+  "author": "Dariia Drobotko",
+  "license": "ISC",
+  "dependencies": {
+    "uuid": "^8.3.2"
+  }
+}
