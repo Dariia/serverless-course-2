@@ -1,15 +1,11 @@
 {
-  "name": "serverless_course_2",
+  "name": "s3_sqs_service",
   "version": "1.0.0",
-  "description": "My event driven serverless application",
+  "description": "s3 sqs service",
   "main": "index.js",
   "author": "Dariia Drobotko",
   "license": "ISC",
-  "devDependencies": {
-    "aws-sdk": "^2.852.0",
-    "serverless-bundle": "^4.2.1"
-  },
   "dependencies": {
-    "aws-xray-sdk": "^3.2.0"
+    "uuid": "^8.3.2"
   }
 }

@@ -1,12 +1,10 @@
-"use strict";
+import { responseOnSuccess, responseOnFailure } from '../../utils/response';
+import dynamoDb from '../../../../../libs/dynamoDb';
 
-const AWS = require("aws-sdk");
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
-
-const updateProduct = (event, context, callback) => {
+const buildParams = event => {
   const data = JSON.parse(event.body);
 
-  const params = {
+  return {
     TableName: process.env.DYNAMODB_TABLE,
     Key: {
       id: event.pathParameters.id
@@ -22,22 +20,15 @@ const updateProduct = (event, context, callback) => {
       "SET name = :name, price = :price, image = :image, updatedAt = :updatedAt",
     ReturnValues: "ALL_NEW"
   };
-
-  dynamoDb.update(params, (error, result) => {
-    if (error) {
-      console.error(error);
-
-      callback(null, {
-        statusCode: error.statusCode || 501
-      });
-      return;
-    }
-
-    callback(null, {
-      statusCode: 200,
-      body: JSON.stringify(result.Attributes)
-    });
-  });
 };
 
-module.exports = updateProduct;
+export async function updateProduct(event) {
+  try {
+    const params = buildParams(event);
+    await dynamoDb.update(params);
+    return responseOnSuccess({ status: true });
+  } catch (error) {
+    console.log("error: ", error.message);
+    return responseOnFailure({ status: false });
+  }
+};

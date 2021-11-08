@@ -1,52 +1,27 @@
-"use strict";
+import { responseOnSuccess, responseOnFailure } from '../../utils/response';
+import dynamoDb from '../../../../../libs/dynamoDb';
 
-const AWS = require("aws-sdk");
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
+const buildParams = event => ({
+  TableName: process.env.DYNAMODB_TABLE,
+  Key: {
+    id: event.pathParameters.id
+  }
+});
 
-module.exports.getProduct = (event, context, callback) => {
-  const params = {
-    TableName: process.env.DYNAMODB_TABLE,
-    Key: {
-      id: event.pathParameters.id
+export async function getProduct(event) {
+  try {
+    const params = buildParams(event);
+    const result = await dynamoDb.get(params);
+
+    if (result.Item) {
+      return responseOnSuccess(result.Item);
+    } else {
+      return responseOnFailure({ status: false, error: "Item not found." });
     }
-  };
-
-  dynamoDb.get(params, (error, result) => {
-    if (error) {
-      console.error(error);
-
-      callback(null, {
-        statusCode: error.statusCode || 501
-      });
-      return;
-    }
-
-    callback(null, {
-      statusCode: 200,
-      body: JSON.stringify(result.Item)
-    });
-  });
+  } catch (error) {
+    console.log("error: ", error.message);
+    return responseOnFailure({ status: false });
+  }
 };
 
-module.exports.getAllProducts = (event, context, callback) => {
-  const params = {
-    TableName: process.env.DYNAMODB_TABLE
-  };
-
-  dynamoDb.scan(params, (error, result) => {
-    if (error) {
-      console.error(error);
-
-      callback(null, {
-        statusCode: error.statusCode || 501
-      });
-      return;
-    }
-
-    callback(null, {
-      statusCode: 200,
-      body: JSON.stringify(result.Items)
-    });
-  });
-};
 

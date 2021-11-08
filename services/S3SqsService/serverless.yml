@@ -1,20 +1,42 @@
-service: serverless-sqs-queue
+service: products-s3-sqs-service
 frameworkVersion: "2"
+
+custom:
+  bucket: products-serverless-course-s3-sqs-bucket
 
 provider:
   name: aws
+  runtime: nodejs12.x
   stage: dev
-  region: us-west-2
+  region: us-east-2
+  memorySize: 128
+  tracing:
+    lambda: true
 
-resources:
-  Resources:
-    S3Queue:
-      Type: "AWS::SQS::Queue"
-      Properties:
-        QueueName: "vehicle-serverless-queue-${self:provider.stage}"
-  Outputs:
-    S3Queue:
-      Value:
-        "Ref": S3Queue
-      Export:
-        Name: vehicle-serverless-queue-${self:provider.stage}
+  environment:
+    QUEUE_URL:
+      "Fn::ImportValue": "product-serverless-queue-${self:provider.stage}"
+    REGION: ${self:provider.region}
+  iamRoleStatements:
+    - ${file(../../serverless.common.yml):lambdaPolicyXRay}
+    - Effect: Allow
+      Action:
+        - "s3:GetObject"
+      Resource: "arn:aws:s3:::${self:custom.bucket}/*"
+    - Effect: Allow
+      Action:
+        - "sqs:SendMessage"
+      Resource: arn:aws:sqs:*:*:product-serverless-queue-${self:provider.stage}
+
+plugins:
+  - serverless-bundle
+
+functions:
+  processS3Bucket:
+    handler: src/handlers/processS3Bucket.processBucket
+    events:
+      - s3:
+          bucket: "${self:custom.bucket}"
+          event: s3:ObjectCreated:*
+          rules:
+            - suffix: .json

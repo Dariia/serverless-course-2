@@ -1,4 +1,4 @@
-service: products-serverless-sqs-queue
+service: products-serverless-s3-queue
 frameworkVersion: "2"
 
 provider:
@@ -8,13 +8,7 @@ provider:
 
 resources:
   Resources:
-    S3Queue:
-      Type: "AWS::SQS::Queue"
+    UploadBucket:
+      Type: "AWS::S3::Bucket"
       Properties:
-        QueueName: "product-serverless-queue-${self:provider.stage}"
-  Outputs:
-    S3Queue:
-      Value:
-        "Ref": S3Queue
-      Export:
-        Name: product-serverless-queue-${self:provider.stage}
+        BucketName: "products-serverless-course-bucket-${self:provider.stage}"

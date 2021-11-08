@@ -1,7 +1,7 @@
 {
   "body": {
-    "vehicle_brand": "test_brand",
-    "vehicle_model": "test_model",
-    "vehicle_year": "2020"
+    "name": "product name s3 create test",
+    "price": 200,
+    "image": "/image.jpg"
   }
 }

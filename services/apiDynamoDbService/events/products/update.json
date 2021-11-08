@@ -1,10 +1,10 @@
 {
   "pathParameters": {
-    "id": "939e1abc-61f4-4157-9ccf-c41fa828fcf8"
+    "id": "860509ce-04f2-4558-b854-28c3af3b6226"
   },
   "body": {
-    "vehicle_brand": "test_brand_updated",
-    "vehicle_model": "test_model_updated",
-    "vehicle_year": 2021
+    "name": "product name 1",
+    "price": 21,
+    "image": "/image_1.jpg"
   }
 }

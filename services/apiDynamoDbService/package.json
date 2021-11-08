@@ -1,7 +1,7 @@
 {
-  "name": "dynamo_db_service",
+  "name": "api_dynamo_db_service",
   "version": "1.0.0",
-  "description": "dynamo db service",
+  "description": "api dynamo db service",
   "main": "handler.js",
   "author": "Dariia Drobotko",
   "license": "ISC",

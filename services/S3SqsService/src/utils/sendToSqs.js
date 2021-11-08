@@ -1,12 +1,19 @@
 import { v4 } from 'uuid';
 import sqs from '../../../../libs/sqs';
 
-export async function sendToSqs(batches, queueUrl) {
-  let batchCount = 0;
+const buildSQSParams = (items, queueUrl) => {
+  return {
+    MessageBody: JSON.stringify(items),
+    QueueUrl: queueUrl
+  };
+};
 
-  // Save each batch
+export async function sendToSqs (batches, queueUrl) {
+  let batchCount = 0; // eslint-disable-line
+  console.log('started: ', batches, queueUrl);
+
   await Promise.all(
-    batches.map(async (itemData) => {
+    batches.map(async itemData => {
       const items = [];
 
       itemData.forEach(item => {
@@ -24,16 +31,9 @@ export async function sendToSqs(batches, queueUrl) {
         batchCount++;
         const result = await sqs.sendMessage(buildSQSParams(items, queueUrl));
         console.log('success: ', result);
-      } catch (err) {
-        console.error('error: ', err);
+      } catch (error) {
+        console.error('error: ', error.message);
       }
     })
   );
 }
-
-const buildSQSParams = (items, queueUrl) => {
-  return {
-    MessageBody: JSON.stringify(items),
-    QueueUrl: queueUrl
-  };
-};

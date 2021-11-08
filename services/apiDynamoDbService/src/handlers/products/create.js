@@ -1,16 +1,14 @@
-"use strict";
+import { v4 } from 'uuid';
+import { responseOnSuccess, responseOnFailure } from '../../utils/response';
+import dynamoDb from '../../../../../libs/dynamoDb';
 
-const AWS = require("aws-sdk");
-const uuid = require("uuid");
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
-
-const createProduct = (event, context, callback) => {
+const buildParams = event => {
   const data = JSON.parse(event.body);
 
-  const params = {
+  return {
     TableName: process.env.DYNAMODB_TABLE,
     Item: {
-      id: uuid.v4(),
+      id: v4(),
       name: data.name,
       price: data.price,
       image: data.image,
@@ -18,22 +16,16 @@ const createProduct = (event, context, callback) => {
       updatedAt: new Date().getTime()
     }
   };
-
-  dynamoDb.put(params, error => {
-    if (error) {
-      console.error(error);
-
-      callback(null, {
-        statusCode: error.statusCode || 501
-      });
-      return;
-    }
-
-    callback(null, {
-      statusCode: 200,
-      body: JSON.stringify(params.Item)
-    });
-  });
 };
 
-module.exports = createProduct;
+export async function createProduct(event) {
+  try {
+    const dbParams = buildParams(event);
+    await dynamoDb.put(dbParams);
+    return responseOnSuccess(dbParams.Item);
+  } catch(error){
+    console.log("error: ", error.message);
+    return responseOnFailure({ status: false });
+  }
+};
+
